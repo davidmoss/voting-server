@@ -132,13 +132,16 @@ describe('application logic', () => {
       const state = Map({
         pair: List.of('Trainspotting', '28 Days Later')
       })
-      const nextState = vote(state, 'Trainspotting');
+      const nextState = vote(state, 'Trainspotting', 'voter1');
       expect(nextState).to.equal(Map({
-          pair: List.of('Trainspotting', '28 Days Later'),
-          tally: Map({
-            'Trainspotting': 1
-          })
-        }));
+        pair: List.of('Trainspotting', '28 Days Later'),
+        tally: Map({
+          'Trainspotting': 1
+        }),
+        votes: Map({
+          voter1: 'Trainspotting'
+        })
+      }));
     });
 
     it('adds to existing tally for voted entry', () => {
@@ -149,12 +152,15 @@ describe('application logic', () => {
           '28 Days Later': 2
         })
       });
-      const nextState = vote(state, 'Trainspotting');
+      const nextState = vote(state, 'Trainspotting', 'voter1');
       expect(nextState).to.equal(Map({
         pair: List.of('Trainspotting', '28 Days Later'),
         tally: Map({
           'Trainspotting': 4,
           '28 Days Later': 2
+        }),
+        votes: Map({
+          voter1: 'Trainspotting'
         })
       }));
     });
@@ -163,9 +169,32 @@ describe('application logic', () => {
       const state = Map({
         pair: List.of('Trainspotting', '28 Days Later')
       });
-      const nextState = vote(state, 'Sunshine');
+      const nextState = vote(state, 'Sunshine', 'voter1');
       expect(nextState).to.equal(Map({
         pair: List.of('Trainspotting', '28 Days Later')
+      }));
+    });
+
+    it('can change voted entry', () => {
+      const state = Map({
+        pair: List.of('Trainspotting', '28 Days Later'),
+        tally: Map({
+          'Trainspotting': 1
+        }),
+        votes: Map({
+          voter1: 'Trainspotting'
+        })
+      })
+      const nextState = vote(state, '28 Days Later', 'voter1');
+      expect(nextState).to.equal(Map({
+        pair: List.of('Trainspotting', '28 Days Later'),
+        tally: Map({
+          'Trainspotting': 0,
+          '28 Days Later': 1
+        }),
+        votes: Map({
+          voter1: '28 Days Later'
+        })
       }));
     });
 

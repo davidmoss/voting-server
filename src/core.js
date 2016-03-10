@@ -37,15 +37,31 @@ export function next(state) {
   }
 }
 
-export function vote(state, entry) {
-  const currentPair = state.get('pair');
-  if(currentPair && currentPair.includes(entry)){
-    return state.updateIn(
-      ['tally', entry],
-      0,
-      tally => tally + 1
-    )
+function removePreviousVote(voteState, voter) {
+  const previousEntry = voteState.getIn(['votes', voter]);
+  if (previousEntry) {
+    return voteState.updateIn(['tally', previousEntry], tally => tally - 1)
+                    .removeIn(['votes', voter]);
+
   } else {
-    return state;
+    return voteState;
   }
+}
+
+function addVote(voteState, entry, voter) {
+  const currentPair = voteState.get('pair');
+  if(currentPair && currentPair.includes(entry)){
+    return voteState.updateIn(['tally', entry], 0, tally => tally + 1)
+                    .setIn(['votes', voter], entry);
+  } else {
+    return voteState;
+  }
+}
+
+export function vote(voteState, entry, voter) {
+  return addVote(
+    removePreviousVote(voteState, voter),
+    entry,
+    voter
+  )
 }

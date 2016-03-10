@@ -36,6 +36,7 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
+          round: 1,
           pair: List.of('Trainspotting', '28 Days Later')
         }),
         entries: List.of('Sunshine')
@@ -56,6 +57,7 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
+          round: 1,
           pair: List.of('Sunshine', 'Millions')
         }),
         entries: List.of('127 Hours', 'Trainspotting')
@@ -76,6 +78,29 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
+          round: 1,
+          pair: List.of('Sunshine', 'Millions')
+        }),
+        entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
+      }));
+    });
+
+    it('increment round number on vote', () => {
+      const state = Map({
+        vote: Map({
+          round: 1,
+          pair: List.of('Trainspotting', '28 Days Later'),
+          tally: Map({
+            'Trainspotting': 3,
+            '28 Days Later': 3
+          })
+        }),
+        entries: List.of('Sunshine', 'Millions', '127 Hours')
+      });
+      const nextState = next(state);
+      expect(nextState).to.equal(Map({
+        vote: Map({
+          round: 2,
           pair: List.of('Sunshine', 'Millions')
         }),
         entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
@@ -98,6 +123,7 @@ describe('application logic', () => {
         winner: 'Trainspotting'
       }));
     });
+
   });
 
   describe('vote', () => {
@@ -130,6 +156,16 @@ describe('application logic', () => {
           'Trainspotting': 4,
           '28 Days Later': 2
         })
+      }));
+    });
+
+    it('cannot vote for invalid entry', () => {
+      const state = Map({
+        pair: List.of('Trainspotting', '28 Days Later')
+      });
+      const nextState = vote(state, 'Sunshine');
+      expect(nextState).to.equal(Map({
+        pair: List.of('Trainspotting', '28 Days Later')
       }));
     });
 

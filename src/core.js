@@ -16,10 +16,13 @@ export function setEntries(state, entries) {
   if(typeof(entries) === 'object'){
     entries = List(entries);
   }
-  return state.set('entries', entries);
+  return state.merge({
+    'entries': entries,
+    'initialEntries': entries
+  });
 }
 
-export function next(state) {
+export function next(state, round = state.getIn(['vote', 'round'], 0)) {
   const entries = state.get('entries')
                        .concat(getWinners(state.get('vote')));
   if(entries.size === 1) {
@@ -29,7 +32,7 @@ export function next(state) {
   } else {
     return state.merge({
       vote: Map({
-        round: state.getIn(['vote', 'round'], 0) + 1,
+        round: round + 1,
         pair: entries.take(2)
       }),
       entries: entries.skip(2)
@@ -64,4 +67,14 @@ export function vote(voteState, entry, voter) {
     entry,
     voter
   )
+}
+
+export function restart(state) {
+  const round = state.getIn(['vote', 'round'], 0);
+  return next(
+    state.set('entries', state.get('initialEntries'))
+         .remove('vote')
+         .remove('winner'),
+    round
+  );
 }

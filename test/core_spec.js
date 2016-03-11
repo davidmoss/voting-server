@@ -1,7 +1,7 @@
 import {List, Map} from 'immutable';
 import {expect} from 'chai';
 
-import {setEntries, next, vote} from '../src/core';
+import {setEntries, next, vote, restart} from '../src/core';
 
 describe('application logic', () => {
 
@@ -12,7 +12,8 @@ describe('application logic', () => {
       const entries = List.of('Trainspotting', '28 Days Later');
       const nextState = setEntries(state, entries);
       expect(nextState).to.equal(Map({
-        entries: List.of('Trainspotting', '28 Days Later')
+        entries: List.of('Trainspotting', '28 Days Later'),
+        initialEntries: List.of('Trainspotting', '28 Days Later')
       }));
     });
 
@@ -21,7 +22,8 @@ describe('application logic', () => {
       const entries = ['Trainspotting', '28 Days Later'];
       const nextState = setEntries(state, entries);
       expect(nextState).to.equal(Map({
-        entries: List.of('Trainspotting', '28 Days Later')
+        entries: List.of('Trainspotting', '28 Days Later'),
+        initialEntries: List.of('Trainspotting', '28 Days Later')
       }));
     });
 
@@ -195,6 +197,46 @@ describe('application logic', () => {
         votes: Map({
           voter1: '28 Days Later'
         })
+      }));
+    });
+
+  });
+
+  describe('restart', () => {
+
+    it('can restart vote', () => {
+      const state = Map({
+          vote: Map({
+            round: 2,
+            pair: List.of('Trainspotting', 'Sunshine')
+          }),
+          entries: List(),
+          initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
+        });
+      const nextState = restart(state);
+      expect(nextState).to.equal(Map({
+        vote: Map({
+          round: 3,
+          pair: List.of('Trainspotting', '28 Days Later')
+        }),
+        entries: List.of('Sunshine'),
+        initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
+      }));
+    });
+
+    it('can restart vote once at winner', () => {
+      const state = Map({
+          winner: 'Trainspotting',
+          initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
+        });
+      const nextState = restart(state);
+      expect(nextState).to.equal(Map({
+        vote: Map({
+          round: 1,
+          pair: List.of('Trainspotting', '28 Days Later')
+        }),
+        entries: List.of('Sunshine'),
+        initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
       }));
     });
 

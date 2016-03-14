@@ -38,9 +38,9 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 1,
           pair: List.of('Trainspotting', '28 Days Later')
         }),
+        round: 1,
         entries: List.of('Sunshine')
       }));
     });
@@ -59,9 +59,9 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 1,
           pair: List.of('Sunshine', 'Millions')
         }),
+        round: 1,
         entries: List.of('127 Hours', 'Trainspotting')
       }));
     });
@@ -80,9 +80,9 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 1,
           pair: List.of('Sunshine', 'Millions')
         }),
+        round: 1,
         entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
       }));
     });
@@ -90,21 +90,21 @@ describe('application logic', () => {
     it('increment round number on vote', () => {
       const state = Map({
         vote: Map({
-          round: 1,
           pair: List.of('Trainspotting', '28 Days Later'),
           tally: Map({
             'Trainspotting': 3,
             '28 Days Later': 3
           })
         }),
+        round: 1,
         entries: List.of('Sunshine', 'Millions', '127 Hours')
       });
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 2,
           pair: List.of('Sunshine', 'Millions')
         }),
+        round: 2,
         entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
       }));
     });
@@ -207,18 +207,18 @@ describe('application logic', () => {
     it('can restart vote', () => {
       const state = Map({
           vote: Map({
-            round: 2,
             pair: List.of('Trainspotting', 'Sunshine')
           }),
+          round: 2,
           entries: List(),
           initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
         });
       const nextState = restart(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 3,
           pair: List.of('Trainspotting', '28 Days Later')
         }),
+        round: 3,
         entries: List.of('Sunshine'),
         initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
       }));
@@ -227,14 +227,15 @@ describe('application logic', () => {
     it('can restart vote once at winner', () => {
       const state = Map({
           winner: 'Trainspotting',
+          round: 1,
           initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
         });
       const nextState = restart(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          round: 1,
           pair: List.of('Trainspotting', '28 Days Later')
         }),
+        round: 2,
         entries: List.of('Sunshine'),
         initialEntries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
       }));

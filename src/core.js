@@ -22,7 +22,7 @@ export function setEntries(state, entries) {
   });
 }
 
-export function next(state, round = state.getIn(['vote', 'round'], 0)) {
+export function next(state, round = state.get('round', 0)) {
   const entries = state.get('entries')
                        .concat(getWinners(state.get('vote')));
   if(entries.size === 1) {
@@ -32,9 +32,9 @@ export function next(state, round = state.getIn(['vote', 'round'], 0)) {
   } else {
     return state.merge({
       vote: Map({
-        round: round + 1,
         pair: entries.take(2)
       }),
+      round: round + 1,
       entries: entries.skip(2)
     });
   }
@@ -70,7 +70,7 @@ export function vote(voteState, entry, voter) {
 }
 
 export function restart(state) {
-  const round = state.getIn(['vote', 'round'], 0);
+  const round = state.get('round', 0);
   return next(
     state.set('entries', state.get('initialEntries'))
          .remove('vote')

@@ -25,9 +25,9 @@ describe('reducer', () => {
 
     expect(nextState).to.equal(fromJS({
       vote: {
-        round: 1,
         pair: ['Trainspotting', '28 Days Later']
       },
+      round: 1,
       entries: []
     }));
   });
@@ -44,9 +44,9 @@ describe('reducer', () => {
 
     expect(nextState).to.equal(fromJS({
       vote: {
-        round: 3,
         pair: ['Trainspotting', '28 Days Later']
       },
+      round: 3,
       entries: ['Sunshine'],
       initialEntries: ['Trainspotting', '28 Days Later', 'Sunshine']
     }));
@@ -106,6 +106,7 @@ describe('reducer', () => {
 
     expect(finalState).to.equal(fromJS({
       winner: 'Trainspotting',
+      round: 1,
       initialEntries: ['Trainspotting', '28 Days Later']
     }));
   });
